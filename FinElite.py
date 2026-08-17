@@ -298,8 +298,8 @@ if not st.session_state.authenticated:
     _, login_col, _ = st.columns([1, 2, 1])
     with login_col:
         st.markdown("### 🔐 Login")
-        username = st.text_input("👤 Username", placeholder="Enter username", key="login_username")
-        password = st.text_input("🔒 Password", type="password", placeholder="Enter password", key="login_password")
+        username = st.text_input("👤 Username", placeholder="Username : admin", key="login_username")
+        password = st.text_input("🔒 Password", type="password", placeholder="Passeord : Admin@123", key="login_password")
 
         st.markdown(
             f'<div class="captcha-display">🧩 CAPTCHA&nbsp;&nbsp; {st.session_state.captcha_question}</div>',
