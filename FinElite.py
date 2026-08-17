@@ -439,7 +439,7 @@ def load_data(uploaded_file=None):
 # ============================================================
 # SIDEBAR
 # ============================================================
-uploaded_file = st.sidebar.file_uploader("📁 Upload Credit Card Excel", type=["xlsx", "xls"])
+uploaded_file = None
 
 try:
     df = load_data(uploaded_file)
