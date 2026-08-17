@@ -447,7 +447,6 @@ except Exception as e:
     st.error(f"❌ {e}")
     st.stop()
 
-st.sidebar.markdown("---")
 st.sidebar.subheader("🎯 Customer Filters")
 
 def multi_filter(label, col):
