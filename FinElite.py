@@ -439,6 +439,87 @@ def load_data(uploaded_file=None):
 # ============================================================
 # SIDEBAR
 # ============================================================
+st.sidebar.title("🎛️ Banking Control Center")
+st.sidebar.caption("")
+uploaded_file = st.sidebar.file_uploader("📁 Upload Credit Card Excel", type=["xlsx", "xls"])
+
+try:
+    df = load_data(uploaded_file)
+except Exception as e:
+    st.error(f"❌ {e}")
+    st.stop()
+
+st.sidebar.markdown("---")
+st.sidebar.subheader("🎯 Customer Filters")
+
+def multi_filter(label, col):
+    if col not in df.columns:
+        return None
+    opts = sorted(df[col].dropna().astype(str).unique().tolist())
+    return st.sidebar.multiselect(label, opts, default=opts)
+
+gender = multi_filter("Gender", "Gender")
+employment = multi_filter("Employment Type", "Employment_Type")
+residential = multi_filter("Residential Status", "Residential_Status")
+kyc = multi_filter("KYC Status", "KYC_Status")
+fraud = multi_filter("Fraud Flag", "Fraud_Flag")
+
+if "Age" in df.columns:
+    age_range = st.sidebar.slider(
+        "👥 Age Range", int(df.Age.min()), int(df.Age.max()),
+        (int(df.Age.min()), int(df.Age.max()))
+    )
+else:
+    age_range = None
+
+if "Annual_Income" in df.columns:
+    income_range = st.sidebar.slider(
+        "💰 Annual Income",
+        float(df.Annual_Income.min()),
+        float(df.Annual_Income.max()),
+        (float(df.Annual_Income.min()), float(df.Annual_Income.max())),
+        format="₹%.0f"
+    )
+else:
+    income_range = None
+
+if "Credit_Score" in df.columns:
+    score_range = st.sidebar.slider(
+        "⭐ Credit Score",
+        int(df.Credit_Score.min()), int(df.Credit_Score.max()),
+        (int(df.Credit_Score.min()), int(df.Credit_Score.max()))
+    )
+else:
+    score_range = None
+
+if "Credit_Utilization" in df.columns:
+    utilization_max = st.sidebar.slider(
+        "💳 Max Credit Utilization (%)", 0, 100, 100
+    )
+else:
+    utilization_max = 100
+
+risk_segment = st.sidebar.radio(
+    "🛡️ Risk Segment",
+    ["All Customers", "High Risk Only", "Standard Risk Only"],
+    index=0
+)
+
+require_kyc = st.sidebar.checkbox("🔒 KYC Complete Only", False)
+
+st.sidebar.markdown("---")
+st.sidebar.subheader("🔮 Applicant Risk Simulator")
+sim_score = st.sidebar.slider("Applicant Credit Score", 300, 850, 580)
+sim_util = st.sidebar.slider("Applicant Utilization (%)", 0, 100, 80)
+sim_missed = st.sidebar.slider("Applicant Missed Payments", 0, 10, 3)
+sim_high = (sim_score < 600) or (sim_util > 75) or (sim_missed >= 3)
+sim_risk_score = min(
+    100, max(0, (850 - sim_score) * 0.4 + sim_util * 0.4 + sim_missed * 10)
+)
+if sim_high:
+    st.sidebar.error(f"⚠️ HIGH RISK\nScore: {sim_risk_score:.1f}/100")
+else:
+    st.sidebar.success(f"✅ STANDARD RISK\nScore: {sim_risk_score:.1f}/100")
 
 # ============================================================
 # APPLY FILTERS
